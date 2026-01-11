@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import { ethers } from "ethers";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
@@ -91,11 +91,20 @@ export default function App() {
       setSendSuccess(false);
       setEtherscanTx(null);
 
-      const res = await fetch("http://localhost:3000/api/send", {
+      //FOR LOCAL
+      // const res = await fetch("http://localhost:3000/api/send", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ sender: wallet, recipient, amount }),
+      // });
+
+      //FOR VERCEL
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sender: wallet, recipient, amount }),
       });
+
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
