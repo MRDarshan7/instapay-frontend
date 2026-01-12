@@ -43,6 +43,11 @@ export default function App() {
       setTimeout(() => setShowWalletToast(false), 3000);
     } catch {
       setSendError("Wallet connection failed");
+
+      setTimeout(() => {
+        setSendError("");
+      }, 3000);
+      
     }
   }
 
@@ -119,6 +124,11 @@ export default function App() {
       setTimeout(() => setShowApproveToast(false), 3000);
     } catch {
       setSendError("Approval failed");
+
+      setTimeout(() => {
+        setSendError("");
+      }, 3000);
+      
     } finally {
       setIsApproving(false);
     }
@@ -135,6 +145,15 @@ export default function App() {
       setEtherscanTx(null);
       
       await ensureShardeumNetwork();
+
+      if (!ethers.isAddress(recipient)) {
+        throw new Error("Invalid recipient address");
+      }
+
+      //Validate amount
+      if (isNaN(amount) || Number(amount) <= 0) {
+        throw new Error("Invalid amount");
+      }
 
 
       //FOR LOCAL
@@ -162,6 +181,11 @@ export default function App() {
       setTimeout(() => setShowConfetti(false), 3000);
     } catch (e) {
       setSendError(e.message || "Transaction failed");
+
+      setTimeout(() => {
+        setSendError("");
+      }, 3000);
+
     } finally {
       setIsSending(false);
     }
@@ -260,7 +284,8 @@ export default function App() {
         </header>
 
         {/* ---------- HERO ---------- */}
-        <section className="text-center max-w-3xl mx-auto mb-20">
+        <section className="text-center max-w-3xl mx-auto mb-20 -mt-8">
+
           <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
             Gasless <span className="text-brand">Stablecoin</span> Transfers
           </h2>
@@ -394,7 +419,7 @@ function Toast({ message, error }) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`fixed top-6 right-6 px-6 py-3 rounded-xl shadow-xl z-50
+      className={`fixed top-20 right-6 px-6 py-3 rounded-xl shadow-xl z-50
         ${error ? "bg-red-500/90" : "bg-card border border-neutral-800"}`}
     >
       {error ? "❌ " : "✅ "} {message}
