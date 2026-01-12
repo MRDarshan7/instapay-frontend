@@ -60,7 +60,7 @@ export default function App() {
       const signer = await provider.getSigner();
 
       const usdc = new ethers.Contract(
-        "0x1B5336949072F738D31Bc650B7723DAcc0bb3659",
+        "0x1D782Be54c51c95c60088Ea8f7069b51F8E84142",
         ["function approve(address,uint256) returns (bool)"],
         signer
       );
@@ -327,7 +327,7 @@ function SuccessModal({ etherscanTx, onClose }) {
             rel="noreferrer"
             className="block text-blue-400 hover:underline mb-4"
           >
-            View on Etherscan
+            View on Shardeum Explorer
           </a>
         )}
 
