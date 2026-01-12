@@ -6,9 +6,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: "#f97316",   // orange accent
-        dark: "#0b0b0b",    // app background
-        card: "#141414",    // card background
+        brand: "#ca67f6",   // orange accent
+        dark: "#100525",    // app background
+        card: "#311957",    // card background
       },
     },
   },
