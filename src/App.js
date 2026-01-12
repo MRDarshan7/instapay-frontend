@@ -3,6 +3,10 @@ import { ethers } from "ethers";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 
+const SHARDEUM_CHAIN_ID = 8119;
+const SHARDEUM_CHAIN_ID_HEX = "0x1FB7";
+
+
 export default function App() {
   const [wallet, setWallet] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -34,6 +38,7 @@ export default function App() {
       const address = await signer.getAddress();
 
       setWallet(address);
+      setIsApproved(false);
       setShowWalletToast(true);
       setTimeout(() => setShowWalletToast(false), 3000);
     } catch {
@@ -50,14 +55,51 @@ export default function App() {
     setShowWalletMenu(false);
   }
 
+  /*----------------CHROME FIX----------------*/
+  // async function ensureShardeumNetwork() {
+  //   if (!window.ethereum) throw new Error("MetaMask not found");
+
+  //   const provider = new ethers.BrowserProvider(window.ethereum);
+  //   const network = await provider.getNetwork();
+
+  //   if (Number(network.chainId) !== SHARDEUM_CHAIN_ID) {
+  //     await window.ethereum.request({
+  //       method: "wallet_switchEthereumChain",
+  //       params: [{ chainId: SHARDEUM_CHAIN_ID_HEX }],
+  //     });
+  //   }
+  // }
+
+  async function ensureShardeumNetwork() {
+    if (!window.ethereum) throw new Error("MetaMask not found");
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const network = await provider.getNetwork();
+
+    if (Number(network.chainId) !== SHARDEUM_CHAIN_ID) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: SHARDEUM_CHAIN_ID_HEX }],
+        });
+      } catch {
+        throw new Error("Please switch to Shardeum network");
+      }
+    }
+  }
+
+
   /* ---------------- APPROVE ---------------- */
 
   async function approveUSDC() {
     try {
       setIsApproving(true);
 
+      await ensureShardeumNetwork();
+
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
+
 
       const usdc = new ethers.Contract(
         "0x1D782Be54c51c95c60088Ea8f7069b51F8E84142",
@@ -84,12 +126,16 @@ export default function App() {
 
   /* ---------------- SEND ---------------- */
 
+  
   async function sendUSDC() {
     try {
       setIsSending(true);
       setSendError("");
       setSendSuccess(false);
       setEtherscanTx(null);
+      
+      await ensureShardeumNetwork();
+
 
       //FOR LOCAL
       // const res = await fetch("http://localhost:3000/api/send", {
